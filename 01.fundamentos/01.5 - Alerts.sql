@@ -1,0 +1,42 @@
+-- Databricks notebook source
+-- MAGIC %md
+-- MAGIC ## Alertas
+-- MAGIC
+-- MAGIC Para criar um alerta no Databricks, siga os seguintes passos:
+-- MAGIC
+-- MAGIC 0. **Escreva a consulta SQL**:
+-- MAGIC    - Acesse o **`SQL Editor`** no Databricks.
+-- MAGIC    - Clique em **`+`** e em seguida em **`Create new query`**.
+-- MAGIC    - Escreva a consulta SQL abaixo.
+-- MAGIC    - Utilize a função `SUM` para somar as transações e `CURRENT_DATE` para filtrar pelo mês atual.
+-- MAGIC    - Exemplo de consulta:
+-- MAGIC      ```sql
+-- MAGIC      SELECT sum(valor_da_fatura) 
+-- MAGIC       FROM catalogo_treinamento.`<seu_nome>`.tb_transacoes_silver
+-- MAGIC       WHERE MONTH(timestamp) = MONTH(CURRENT_DATE) 
+-- MAGIC       AND YEAR(timestamp) = YEAR(CURRENT_DATE);
+-- MAGIC      ```
+-- MAGIC    - Salve-a com o seguinte nome: `Transações mês - SEU NOME`.
+-- MAGIC
+-- MAGIC 1. **Navegue até a aba de Alertas**:
+-- MAGIC    - No menu lateral, em `**SQL**` clique em **`Alerts`**.
+-- MAGIC
+-- MAGIC 2. **Crie um novo alerta**:
+-- MAGIC    - Clique no botão "Create Alert".
+-- MAGIC
+-- MAGIC 3. **Configure o alerta**:
+-- MAGIC Para criar uma query para contar a quantidade de transações no mês atual, siga os seguintes passos:
+-- MAGIC    - **Nome**: Dê um nome ao seu alerta: `Alerta transações mês - SEU NOME`.
+-- MAGIC    - **SQL Query**: Insira a consulta SQL que será usada para verificar a condição do alerta.
+-- MAGIC    - **Threshold**: Defina o limiar que acionará o alerta (se o resultado da consulta for maior que um 200000).
+-- MAGIC
+-- MAGIC 4. **Salve o alerta**:
+-- MAGIC    - Clique em "Create alert" para salvar e ativar o alerta.
+-- MAGIC
+-- MAGIC 5. Crie um schedule **`Add schedule`** e adicione seu email como destinatário na aba **`Destinations`** para ser notificado caso a soma de transações ultrapasse 200mil e clique em **`Create`**.
+-- MAGIC
+-- MAGIC 6. Nos três pontinhos ao lado do seu e-mail em **`Schedule`**, clique em **`Pause`** para não ficar disparando e em seguida clique no botão **`play`** ao lado do seu e-mail e aguarde alguns minutos o e-mail chegar em sua caixa de entrada.
+-- MAGIC
+-- MAGIC Pronto! Seu alerta está configurado e será acionado ficando da seguinte forma.
+-- MAGIC
+-- MAGIC ![](https://github.com/anasanchezss9/db_sql_lab/blob/main/images/alerts%20result.png?raw=true)

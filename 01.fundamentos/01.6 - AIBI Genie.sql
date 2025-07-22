@@ -1,0 +1,48 @@
+-- Databricks notebook source
+-- MAGIC %md
+-- MAGIC
+-- MAGIC ## Criando uma Sala do Genie
+-- MAGIC
+-- MAGIC Para criar uma sala do Genie com as tabelas `tb_transacoes_silver` e `tb_clientes_silver`, siga os passos abaixo:
+-- MAGIC
+-- MAGIC 1. **Acesse o Genie**:
+-- MAGIC    - No menu lateral, em **`SQL`** clique em **`Genie`**.
+-- MAGIC
+-- MAGIC 2. **Crie uma nova sala**:
+-- MAGIC    - Clique no botão **`+ New`**.
+-- MAGIC
+-- MAGIC 3. **Configure a sala**:
+-- MAGIC    - **Title**: Dê um nome à sua sala, por exemplo, `Sala de Análise de Transações e Clientes - SEU NOME`.
+-- MAGIC    - **Description**: Adicione uma descrição para a sala, como `Sala para análise das tabelas de transações e clientes`.
+-- MAGIC
+-- MAGIC 4. **Adicionar o Warehouse**:
+-- MAGIC    - Em **`Default warehouse`** selecione o warehouse que contenha a palavra `Serverless`.
+-- MAGIC
+-- MAGIC 5. **Adicione as tabelas**:
+-- MAGIC    - Em **`Tables`** clique em "Add Table" e selecione a tabela `tb_transacoes_silver` _(catalogo_treinamento.`<seu_nome>`.tb_transacoes_silver)_.
+-- MAGIC    - Repita o processo para adicionar a tabela `tb_clientes_silver`_ (catalogo_treinamento.`<seu_nome>`.tb_clientes_silver)_.
+-- MAGIC
+-- MAGIC 6. **Salve a sala**:
+-- MAGIC    - Clique em "Save" para salvar e ativar a sala.
+-- MAGIC
+-- MAGIC Pronto! Sua sala do Genie com as tabelas `tb_transacoes_silver` e `tb_clientes_silver` está configurada.
+-- MAGIC
+-- MAGIC ![](https://github.com/anasanchezss9/db_sql_lab/blob/main/images/genie.png?raw=true)
+-- MAGIC
+-- MAGIC  Seguem abaixo algumas perguntas de exemplo para vocês começarem a conversar com os seus dados:
+-- MAGIC
+-- MAGIC - descreva os datasets
+-- MAGIC - Quantas transações tivemos ontem?
+-- MAGIC - quantas transações tivemos no ultimo mes?
+-- MAGIC - qual são os 10 clientes que mais transacionam?
+-- MAGIC - Qual a soma do valor transacionado por categoria de lojista e central?
+-- MAGIC - quantos clientes com mais de 5 anos de relacionamento tem propensao a evasao em campinas?
+-- MAGIC - quais sao esses clientes?
+-- MAGIC - ordene esses clientes por maior renda mensal
+-- MAGIC - qual é o canal preferencial desses clientes?
+-- MAGIC - me de as informacoes sobre o cliente 9583 sobre indice de satisfacao, quantidade de atendimentos e canal preferencial
+-- MAGIC - qual é o email dele?
+-- MAGIC - qual é o nome do cliente que mais tem transações no mes passado
+-- MAGIC - ela tem propensão a evasao?
+-- MAGIC - quais são as lojas que ele mais transaciona
+-- MAGIC
