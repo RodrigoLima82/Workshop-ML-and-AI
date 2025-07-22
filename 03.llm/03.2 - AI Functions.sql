@@ -35,18 +35,6 @@
 
 -- COMMAND ----------
 
--- MAGIC %python
--- MAGIC dbutils.widgets.removeAll()
--- MAGIC
--- MAGIC dbutils.widgets.text("catalogo", "catalogo_treinamento", "Catalogo")
--- MAGIC dbutils.widgets.text("database", "default", "Database")
--- MAGIC
--- MAGIC catalogo = dbutils.widgets.get("catalogo")
--- MAGIC database = dbutils.widgets.get("database")
--- MAGIC
-
--- COMMAND ----------
-
 -- MAGIC %md ## Exercício 01.01 - Acessando o conjunto de dados
 -- MAGIC
 -- MAGIC Agora, vamos acessar as avaliações de produto que carregamos no laboratório anterior.
@@ -60,6 +48,12 @@
 -- COMMAND ----------
 
 -- MAGIC %md ### A. Selecionar o database que criamos anteriormente
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC catalogo = 'workspace'
+-- MAGIC database = 'default'
 
 -- COMMAND ----------
 
@@ -106,7 +100,7 @@ SELECT * FROM llm_clientes
 -- MAGIC Vamos vê-los em funcionamento!
 -- MAGIC
 -- MAGIC 1. No **menu principal** à esquerda, clique em **`Serving`**
--- MAGIC 2. No card do modelo **Claude Sonnet 4**, clique em **`Use`**
+-- MAGIC 2. No card do modelo **Gemma 3 12B**, clique em **`Use`**
 -- MAGIC 3. Adicione a instrução abaixo:
 -- MAGIC     ```
 -- MAGIC     Classifique o sentimento da seguinte avaliação:
@@ -127,12 +121,10 @@ SELECT * FROM llm_clientes
 -- MAGIC
 -- MAGIC Vamos fazer o seguinte teste:
 -- MAGIC
--- MAGIC 1. No **menu principal** à esquerda, clique em **`Playgroud`**
--- MAGIC 2. Clique no **seletor de modelos** e selecione o modelo **`Claude Sonnet 4`** (caso já não esteja selecionado)
+-- MAGIC 1. Clique no ícone **`Add endpoint`**
+-- MAGIC 2. Clique no **seletor de modelos** e selecione o modelo **`Llama 4 Maverick`**
 -- MAGIC 3. Clique no ícone **`Add endpoint`**
--- MAGIC 4. Clique no **seletor de modelos** e selecione o modelo **`Llama 4 Maverick`**
--- MAGIC 5. Clique no ícone **`Add endpoint`**
--- MAGIC 6. Adicione a instrução abaixo:
+-- MAGIC 4. Adicione a instrução abaixo:
 -- MAGIC     ```
 -- MAGIC     Classifique o sentimento da seguinte avaliação:
 -- MAGIC     Comprei um tablet e estou muito insatisfeito com a qualidade da bateria. 
@@ -194,7 +186,7 @@ SELECT *, ai_extract(avaliacao, ARRAY('produto')) AS produtos FROM llm_avaliacoe
 -- COMMAND ----------
 
 SELECT *, ai_query(
-  'databricks-claude-sonnet-4', 
+  'databricks-gemma-3-12b', 
   concat('Se o sentimento da avaliação for negativo, liste os motivos de insatisfação. Avaliação: ', avaliacao)) AS motivo_insatisfacao 
 FROM llm_avaliacoes LIMIT 10
 
@@ -219,9 +211,9 @@ FROM llm_avaliacoes LIMIT 10
 
 CREATE OR REPLACE FUNCTION REVISAR_AVALIACAO(avaliacao STRING)
 RETURNS STRUCT<produto_nome: STRING, produto_categoria: STRING, sentimento: STRING, resposta: STRING, resposta_motivo: STRING>
-RETURN FROM_JSON(
+RETURN FROM_JSON(REPLACE(
   AI_QUERY(
-    'databricks-claude-sonnet-4',
+    'databricks-gemma-3-12b',
     CONCAT(
       'Um cliente fez uma avaliação. Nós respondemos todos que aparentem descontentes.
       Extraia as seguintes informações:
@@ -230,7 +222,7 @@ RETURN FROM_JSON(
       - classifique o sentimento como ["POSITIVO","NEGATIVO","NEUTRO"]
       - retorne se o sentimento é NEGATIVO e precisa de responsta: S ou N
       - se o sentimento é NEGATIVO, explique quais os principais motivos
-      - sempre remover os caracteres ``` do resultado
+      - remover todos e sempre os caracteres ``` do resultado
       Retorne somente um JSON. Nenhum outro texto fora o JSON. Formato do JSON:
       {
         "produto_nome": <entidade nome>,
@@ -241,7 +233,7 @@ RETURN FROM_JSON(
       }
       Avaliação: ', avaliacao
     )
-  ),
+  ),'```json', ''),
   "STRUCT<produto_nome: STRING, produto_categoria: STRING, sentimento: STRING, resposta: STRING, motivo: STRING>"
 )
 
@@ -307,7 +299,7 @@ CREATE OR REPLACE FUNCTION GERAR_RESPOSTA(nome STRING, sobrenome STRING, num_ped
 RETURNS TABLE(resposta STRING)
 COMMENT 'Caso o cliente demonstre insatisfação com algum produto, use esta função para gerar uma resposta personalizada'
 RETURN SELECT AI_QUERY(
-    'databricks-claude-sonnet-4',
+    'databricks-gemma-3-12b',
     CONCAT(
         "Você é um assistente virtual de um e-commerce. Nosso cliente, ", gerar_resposta.nome, " ", gerar_resposta.sobrenome, " que comprou ", gerar_resposta.num_pedidos, " produtos este ano estava insatisfeito com o produto ", gerar_resposta.produto, 
         ", pois ", gerar_resposta.motivo, ". Forneça uma breve mensagem empática para o cliente incluindo a oferta de troca do produto, caso  esteja em conformidade com a nossa política de trocas. A troca pode ser feita diretamente por esse assistente. ",
@@ -324,7 +316,7 @@ RETURN SELECT AI_QUERY(
 
 -- COMMAND ----------
 
-CREATE TABLE llm_respostas AS
+CREATE OR REPLACE TABLE llm_respostas AS
 
   WITH avaliacoes_enriq AS (
     SELECT a.*, c.* EXCEPT (c.id_cliente) 

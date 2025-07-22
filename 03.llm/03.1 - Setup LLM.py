@@ -16,16 +16,8 @@
 
 # COMMAND ----------
 
-dbutils.widgets.removeAll()
-
-# COMMAND ----------
-
-dbutils.widgets.text("catalogo", "catalogo_treinamento", "Catalogo")
-dbutils.widgets.text("database", "default", "Database")
-
-catalogo = dbutils.widgets.get("catalogo")
-database = dbutils.widgets.get("database")
-
+catalogo = 'workspace'
+database = 'default'
 
 # COMMAND ----------
 

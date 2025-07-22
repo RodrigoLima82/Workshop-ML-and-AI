@@ -47,9 +47,9 @@
 -- MAGIC Vamos ver como utilizar ferramentas na prática!
 -- MAGIC
 -- MAGIC 1. No **menu principal** à esquerda, clique em **`Playground`**
--- MAGIC 2. Clique no **seletor de modelos** e selecione o modelo **`Claude Sonnet 4`** (caso já não esteja selecionado)
+-- MAGIC 2. Clique no **seletor de modelos** e selecione o modelo **`Meta Llama 3.3 70B Instruct`** (caso já não esteja selecionado)
 -- MAGIC 3. Clique em **Tools** e depois em **Add Tool** 
--- MAGIC 4. Em **Hosted Function**, digite `catalogo_treinamento.<seu_nome>.llm_revisar_avaliacao`
+-- MAGIC 4. Em **Hosted Function**, digite `workspace.default.llm_revisar_avaliacao`
 -- MAGIC 5. Adicione a instrução abaixo:
 -- MAGIC     ```
 -- MAGIC     Revise a avaliação abaixo:
@@ -84,14 +84,8 @@
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC dbutils.widgets.removeAll()
--- MAGIC
--- MAGIC dbutils.widgets.text("catalogo", "catalogo_treinamento", "Catalogo")
--- MAGIC dbutils.widgets.text("database", "default", "Database")
--- MAGIC
--- MAGIC catalogo = dbutils.widgets.get("catalogo")
--- MAGIC database = dbutils.widgets.get("database")
--- MAGIC
+-- MAGIC catalogo = 'workspace'
+-- MAGIC database = 'default'
 
 -- COMMAND ----------
 
@@ -125,9 +119,9 @@ SELECT * FROM consultar_cliente(1)
 -- MAGIC %md ### D. Testar a função como ferramenta
 -- MAGIC
 -- MAGIC 1. No **menu principal** à esquerda, clique em **`Playground`**
--- MAGIC 2. Clique no **seletor de modelos** e selecione o modelo **`Claude Sonnet 4`** (caso já não esteja selecionado)
+-- MAGIC 2. Clique no **seletor de modelos** e selecione o modelo **`Meta Llama 3.3 70B Instruct`** (caso já não esteja selecionado)
 -- MAGIC 3. Clique em **Tools** e depois em **Add Tool** 
--- MAGIC 4. Em **Hosted Function**, digite `catalogo_treinamento.<seu_nome>.consultar_cliente` e `catalogo_treinamento.<seu_nome>.llm_revisar_avaliacao`
+-- MAGIC 4. Em **Hosted Function**, digite `workspace.default.consultar_cliente` e `workspace.default.llm_revisar_avaliacao`
 -- MAGIC 5. Adicione a instrução abaixo:<br>
 -- MAGIC     `Gere uma resposta para o cliente 1 que está insatisfeito com a qualidade da tela do seu tablet. Não esqueça de customizar a mensagem com o nome do cliente.`
 -- MAGIC 6. Clique no ícone **enviar**

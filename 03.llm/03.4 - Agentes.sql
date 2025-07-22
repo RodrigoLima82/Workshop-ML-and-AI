@@ -41,14 +41,8 @@
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC dbutils.widgets.removeAll()
--- MAGIC
--- MAGIC dbutils.widgets.text("catalogo", "catalogo_treinamento", "Catalogo")
--- MAGIC dbutils.widgets.text("database", "default", "Database")
--- MAGIC
--- MAGIC catalogo = dbutils.widgets.get("catalogo")
--- MAGIC database = dbutils.widgets.get("database")
--- MAGIC
+-- MAGIC catalogo = 'workspace'
+-- MAGIC database = 'default'
 
 -- COMMAND ----------
 
@@ -80,7 +74,7 @@ ALTER TABLE llm_faq SET TBLPROPERTIES (delta.enableChangeDataFeed = true)
 -- MAGIC %md ### B. Criar um índice no Vector Search
 -- MAGIC
 -- MAGIC 1. No **menu principal** à esquerda, clique em **`Catalog`**
--- MAGIC 2. Busque a sua **tabela** `<seu_catalog>.<seu_schema>.faq`
+-- MAGIC 2. Busque a sua **tabela** `workspace.default.faq`
 -- MAGIC 3. Clique em `Create` e depois em `Vector search index`
 -- MAGIC 4. Preencha o formulário:
 -- MAGIC     - **Nome:** faq_index
@@ -105,7 +99,7 @@ CREATE OR REPLACE FUNCTION consultar_faq(pergunta STRING)
 RETURNS TABLE(id LONG, pergunta STRING, resposta STRING, search_score DOUBLE)
 COMMENT 'Use esta função para consultar a base de conhecimento sobre prazos de entrega, pedidos de troca ou devolução, entre outras perguntas frequentes sobre o nosso marketplace'
 RETURN select * from vector_search(
-  index => 'catalogo_treinamento.rodrigo_oliveira.llm_faq_index', 
+  index => 'workspace.default.llm_faq_index', 
   query => consultar_faq.pergunta,
   num_results => 1
 )
@@ -139,7 +133,7 @@ ALTER TABLE llm_produtos SET TBLPROPERTIES (delta.enableChangeDataFeed = true)
 -- MAGIC %md ### B. Criar um índice no Vector Search
 -- MAGIC
 -- MAGIC 1. No **menu principal** à esquerda, clique em **`Catalog`**
--- MAGIC 2. Busque a sua **tabela** `<seu_catalog>.<seu_nome>.produtos`
+-- MAGIC 2. Busque a sua **tabela** `workspace.default.produtos`
 -- MAGIC 3. Clique em `Create` e depois em `Vector search index`
 -- MAGIC 4. Preencha o formulário:
 -- MAGIC     - **Nome:** produtos_index
@@ -164,7 +158,7 @@ CREATE OR REPLACE FUNCTION buscar_produtos_semelhantes(descricao STRING)
 RETURNS TABLE(id LONG, produto STRING, descricao STRING, search_score DOUBLE)
 COMMENT 'Esta função recebe a descrição de um produto, que é utilizada para buscar produtos semelhantes'
 RETURN SELECT * FROM vector_search(
-  index => 'catalogo_treinamento.rodrigo_oliveira.llm_produtos_index',
+  index => 'workspace.deafult.llm_produtos_index',
   query => buscar_produtos_semelhantes.descricao,
   num_results => 10)
 WHERE search_score BETWEEN 0.003 AND 0.99
@@ -184,9 +178,9 @@ SELECT * FROM buscar_produtos_semelhantes('O fone de ouvido DEF é um dispositiv
 -- MAGIC %md ## Exercício 03.03 - Testando nosso agente
 -- MAGIC
 -- MAGIC 1. No **menu principal** à esquerda, clique em **`Playground`**
--- MAGIC 2. Clique no **seletor de modelos** e selecione o modelo **`Claude Sonnet 4`** (caso já não esteja selecionado)
+-- MAGIC 2. Clique no **seletor de modelos** e selecione o modelo **`Meta Llama 3.3 70B Instruct`** (caso já não esteja selecionado)
 -- MAGIC 3. Clique em **Tools** e depois em **Add Tool** 
--- MAGIC 4. Em **Hosted Function**, digite `<seu_catalog>.<seu_schema>.*` para adicionar todas as funções criadas
+-- MAGIC 4. Em **Hosted Function**, digite `workspace.default.*` para adicionar todas as funções criadas
 -- MAGIC 5. Em **System Prompt**, digite: <br>
 -- MAGIC `Você é um assistente virtual de um e-commerce. Para responder à perguntas, é necessário que o cliente forneça seu CPF. Caso ainda não tenha essa informação, solicite o CPF educadamente. Você pode responder perguntas sobre entrega, devolução de produtos, status de pedidos, entre outros. Se você não souber como responder a pergunta, diga que você não sabe. Não invente ou especule sobre nada. Sempre que perguntado sobre procedimentos, consulte nossa base de conhecimento.`
 -- MAGIC 6. Digite `Olá!`
